@@ -33,7 +33,7 @@ pub fn main() !void {
     var app = application.Application.init(
         alloc.allocator(),
         application.ApplicationConfig{
-            .title = "zig-mario",
+            .title = "Grandpa Trouble",
             .display = .{
                 .width = 960,
                 .height = 640,

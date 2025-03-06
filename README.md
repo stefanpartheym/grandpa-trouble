@@ -1,25 +1,10 @@
-# zig-mario
+# Grandpa Trouble
 
-> My implementation of `Super Mario` in [zig](https://ziglang.org/) using [raylib](https://github.com/Not-Nik/raylib-zig) and an [ECS](https://github.com/prime31/zig-ecs).
+> A 2D platformer where a rebellious old man escapes his retirement home, using his wit and stubbornness to overcome quirky enemies on his wild adventure.
 
 ![Screenshot](./screenshot.png)
 
-I'm working on this game as part of [The 20 Games Challenge](https://20_games_challenge.gitlab.io/). Super Mario is [Challenge #6](https://20_games_challenge.gitlab.io/challenge/#6).
-
-## Goals
-
-_source: [The 20 Games Challenge #6 (Super Mario)](https://20_games_challenge.gitlab.io/challenge/#6)_
-
-- [x] Create a 2D character controller. Mario should be able to walk, run, and jump.
-- [x] Create a single level. You can make world 1-1, or design your own level. The level should be made up of textured tiles. There will also be some special elements:
-  - [ ] ~~Add “question mark” boxes. These will contain coins or power ups.~~
-  - [ ] ~~Add warp pipes. Mario should be able to enter these by pressing the “down” button. He will exit a pipe somewhere else on the map.~~
-  - [x] At the end of the level should be a castle and a flagpole. Touching the flagpole will end the level.
-- [x] Add enemies to the level. Goombas will walk in a straight line and turn around when they hit something. Jumping on a Goomba will squash it.
-- [ ] Add Koopas. Koopas will retreat into their shell when stomped on. The shell will move when hit again.
-- [ ] Add power ups. A mushroom will cause Mario to increase in size. Feel free to add stars or fire flowers as well.
-- [x] Make your own sprites, sound effects, and music. Pay special attention to the artwork for repeating tiles, pattern should look good when repeated.
-- [x] Add a life counter and level timer. Mario will die if the timer reaches zero before he finds the level exit.
+Written in [zig](https://ziglang.org/) using [raylib](https://github.com/Not-Nik/raylib-zig) and an [ECS](https://github.com/prime31/zig-ecs).
 
 ## TODO
 
@@ -27,7 +12,7 @@ _source: [The 20 Games Challenge #6 (Super Mario)](https://20_games_challenge.gi
 
 ## Playing the web version of the game
 
-Head over to [itch.io](https://steflo.itch.io/zig-mario) to play the game in your browser.
+Head over to [itch.io](https://steflo.itch.io/grandpa-trouble) to play the game in your browser.
 
 ## Running the game
 

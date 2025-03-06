@@ -21,7 +21,7 @@ pub fn build(b: *std.Build) !void {
 
 fn buildNative(b: *std.Build, options: Options) !void {
     const exe = b.addExecutable(.{
-        .name = "zig-mario",
+        .name = "grandpa-trouble",
         .root_source_file = b.path("src/main.zig"),
         .target = options.target,
         .optimize = options.optimize,
