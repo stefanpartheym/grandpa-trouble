@@ -9,8 +9,8 @@
             .hash = "zemscripten-1.1.0-g1XHfF48AABUMcTeaMoJQAXLKpfip98rUoE2kTabN97a",
         },
         .emsdk = .{
-            .url = "git+https://github.com/emscripten-core/emsdk?ref=3.1.70#2514ec738de72cebbba7f4fdba0cf2fabcb779a5",
-            .hash = "12203d37f4492c950b6a30710844d6896fbeffc9bc6e70bffef6f702f7c5bc9849f0",
+            .url = "git+https://github.com/emscripten-core/emsdk?ref=4.0.4#074211759c17c646164d3271ca1d155cc174f78e",
+            .hash = "N-V-__8AAFi6BQDeMj7wH24J1F5Mj8s7kkJZEPJanR8j0W6u",
         },
         .zalgebra = .{
             .url = "git+https://github.com/kooparse/zalgebra.git#4095192e370472a34fddc7b7aa39ab6158643e3b",

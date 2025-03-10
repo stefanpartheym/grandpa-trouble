@@ -114,7 +114,7 @@ fn buildWasm(b: *std.Build, options: Options) !void {
         },
     );
 
-    emcc_step.dependOn(zemscripten.activateEmsdkStep(b, emsdk_dep, "3.1.70"));
+    emcc_step.dependOn(zemscripten.activateEmsdkStep(b, emsdk_dep, "4.0.4"));
     b.getInstallStep().dependOn(emcc_step);
 
     const emrun_step = zemscripten.emrunStep(
