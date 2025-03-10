@@ -6,6 +6,7 @@
 //! see: [https://github.com/ziglang/zig/issues/19072](https://github.com/ziglang/zig/issues/19072)
 
 const std = @import("std");
+const builtin = @import("builtin");
 
 const Self = @This();
 const name = @typeName(Self);
@@ -15,19 +16,17 @@ gpa: ?Gpa,
 alt_allocator: ?std.mem.Allocator,
 
 pub fn init() Self {
-    const builtin = @import("builtin");
     // Pick the allocator to use depending on platform.
-    if (builtin.os.tag == .wasi or builtin.os.tag == .emscripten) {
-        return Self{
+    return switch (builtin.os.tag) {
+        .wasi, .emscripten => Self{
             .gpa = null,
             .alt_allocator = std.heap.c_allocator,
-        };
-    } else {
-        return Self{
+        },
+        else => Self{
             .gpa = Gpa{},
             .alt_allocator = null,
-        };
-    }
+        },
+    };
 }
 
 pub fn deinit(self: *Self) void {
@@ -40,11 +39,8 @@ pub fn deinit(self: *Self) void {
 }
 
 pub fn allocator(self: *Self) std.mem.Allocator {
-    if (self.gpa) |*gpa| {
-        return gpa.allocator();
-    } else if (self.alt_allocator) |alt_allocator| {
-        return alt_allocator;
-    } else {
-        @panic("No allocator backend available: " ++ name ++ " possibly not initialized.");
-    }
+    return switch (builtin.os.tag) {
+        .wasi, .emscripten => self.alt_allocator,
+        else => if (self.gpa) |*gpa| gpa.allocator() else null,
+    } orelse @panic("No allocator backend available: " ++ name ++ " possibly not initialized.");
 }
