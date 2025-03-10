@@ -136,7 +136,7 @@ pub const Shape = union(ShapeType) {
         radius: f32,
     },
 
-    pub fn triangle(v1: Vec2, v2: Vec2, v3: Vec2) Self {
+    pub fn new_triangle(v1: Vec2, v2: Vec2, v3: Vec2) Self {
         return Self{
             .triangle = .{
                 .v1 = v1,
@@ -146,7 +146,7 @@ pub const Shape = union(ShapeType) {
         };
     }
 
-    pub fn rectangle(width: f32, height: f32) Self {
+    pub fn new_rectangle(width: f32, height: f32) Self {
         return Self{
             .rectangle = .{
                 .width = width,
@@ -155,7 +155,7 @@ pub const Shape = union(ShapeType) {
         };
     }
 
-    pub fn circle(radius: f32) Self {
+    pub fn new_circle(radius: f32) Self {
         return Self{
             .circle = .{ .radius = radius },
         };
@@ -282,14 +282,14 @@ pub const Visual = union(VisualType) {
     },
 
     /// Creates a stub Visual component.
-    pub fn stub() Self {
+    pub fn new_stub() Self {
         return Self{
             .stub = .{ .value = 1 },
         };
     }
 
     /// Creates a stub Visual component.
-    pub fn color(value: rl.Color, outline: bool) Self {
+    pub fn new_color(value: rl.Color, outline: bool) Self {
         return Self{
             .color = .{
                 .value = value,
@@ -298,7 +298,7 @@ pub const Visual = union(VisualType) {
         };
     }
 
-    pub fn sprite(
+    pub fn new_sprite(
         texture: *const rl.Texture,
         rect: ?Rect,
     ) Self {
@@ -313,7 +313,7 @@ pub const Visual = union(VisualType) {
         };
     }
 
-    pub fn text(
+    pub fn new_text(
         value: [:0]const u8,
         size: i32,
         text_color: rl.Color,
@@ -327,7 +327,7 @@ pub const Visual = union(VisualType) {
         };
     }
 
-    pub fn animation(
+    pub fn new_animation(
         texture: *const rl.Texture,
         anim: *sprites.AnimatedSpriteSheet,
         definition: AnimationDefinition,

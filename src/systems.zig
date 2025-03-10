@@ -173,15 +173,15 @@ pub fn debugDraw(reg: *entt.Registry, color: rl.Color) void {
         // Draw entity AABB outline.
         drawEntity(
             pos,
-            comp.Shape.rectangle(shape.getWidth(), shape.getHeight()),
-            comp.Visual.color(color, true),
+            comp.Shape.new_rectangle(shape.getWidth(), shape.getHeight()),
+            comp.Visual.new_color(color, true),
         );
         // If entity is collidable, draw the collision AABB with a slight alpha.
         if (reg.tryGet(comp.Collision, entity)) |collision_comp| {
             drawEntity(
                 pos,
-                comp.Shape.rectangle(collision_comp.aabb_size.x(), collision_comp.aabb_size.y()),
-                comp.Visual.color(color.alpha(0.25), false),
+                comp.Shape.new_rectangle(collision_comp.aabb_size.x(), collision_comp.aabb_size.y()),
+                comp.Visual.new_color(color.alpha(0.25), false),
             );
         }
     }
@@ -198,8 +198,8 @@ pub fn debugDrawVelocity(reg: *entt.Registry, color: rl.Color, delta_time: f32) 
         // Draw entity AABB outline.
         drawEntity(
             comp.Position.fromVec2(pos.toVec2().add(vel.value.scale(delta_time))),
-            comp.Shape.rectangle(shape.getWidth(), shape.getHeight()),
-            comp.Visual.color(color, true),
+            comp.Shape.new_rectangle(shape.getWidth(), shape.getHeight()),
+            comp.Visual.new_color(color, true),
         );
     }
 }
@@ -359,18 +359,18 @@ pub fn drawText(
 
 /// Generic drawing function to be used for `stub` and `color` visuals.
 pub fn drawShape(pos: comp.Position, shape: comp.Shape, color: rl.Color, outline: bool) void {
-    const p = .{ .x = pos.x, .y = pos.y };
+    const p: rl.Vector2 = .{ .x = pos.x, .y = pos.y };
     switch (shape) {
         .triangle => {
-            const v1 = .{
+            const v1: rl.Vector2 = .{
                 .x = p.x + shape.triangle.v1.x(),
                 .y = p.y + shape.triangle.v1.y(),
             };
-            const v2 = .{
+            const v2: rl.Vector2 = .{
                 .x = p.x + shape.triangle.v2.x(),
                 .y = p.y + shape.triangle.v2.y(),
             };
-            const v3 = .{
+            const v3: rl.Vector2 = .{
                 .x = p.x + shape.triangle.v3.x(),
                 .y = p.y + shape.triangle.v3.y(),
             };
@@ -381,14 +381,14 @@ pub fn drawShape(pos: comp.Position, shape: comp.Shape, color: rl.Color, outline
             }
         },
         .rectangle => {
-            const size = .{ .x = shape.rectangle.width, .y = shape.rectangle.height };
+            const size: rl.Vector2 = .{ .x = shape.rectangle.width, .y = shape.rectangle.height };
             if (outline) {
                 // NOTE: The `drawRectangleLines` function draws the outlined
                 // rectangle incorrectly. Hence, drawing the lines individually.
-                const v1 = .{ .x = p.x, .y = p.y };
-                const v2 = .{ .x = p.x + size.x, .y = p.y };
-                const v3 = .{ .x = p.x + size.x, .y = p.y + size.y };
-                const v4 = .{ .x = p.x, .y = p.y + size.y };
+                const v1: rl.Vector2 = .{ .x = p.x, .y = p.y };
+                const v2: rl.Vector2 = .{ .x = p.x + size.x, .y = p.y };
+                const v3: rl.Vector2 = .{ .x = p.x + size.x, .y = p.y + size.y };
+                const v4: rl.Vector2 = .{ .x = p.x, .y = p.y + size.y };
                 rl.drawLineV(v1, v2, color);
                 rl.drawLineV(v2, v3, color);
                 rl.drawLineV(v3, v4, color);

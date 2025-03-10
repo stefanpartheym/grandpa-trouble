@@ -37,13 +37,13 @@ pub fn createPlayer(
     atlas: *graphics.sprites.AnimatedSpriteSheet,
 ) void {
     const pos = comp.Position.fromVec2(spawn_pos);
-    const shape = comp.Shape.rectangle(33, 45);
+    const shape = comp.Shape.new_rectangle(33, 45);
     entities.setRenderable(
         reg,
         entity,
         pos,
         shape,
-        comp.Visual.animation(
+        comp.Visual.new_animation(
             texture,
             atlas,
             .{ .name = "player_0", .speed = 1.5 },
@@ -112,13 +112,13 @@ pub fn createCoin(
     atlas: *graphics.sprites.AnimatedSpriteSheet,
 ) entt.Entity {
     const e = reg.create();
-    const shape = comp.Shape.rectangle(18, 18);
+    const shape = comp.Shape.new_rectangle(18, 18);
     entities.setRenderable(
         reg,
         e,
         comp.Position.fromVec2(spawn_pos.sub(shape.getSize().scale(0.5))),
         shape,
-        comp.Visual.animation(texture, atlas, .{ .name = "coin_0", .speed = 8 }),
+        comp.Visual.new_animation(texture, atlas, .{ .name = "coin_0", .speed = 8 }),
         comp.VisualLayer.new(VisualLayer.items),
     );
     reg.add(e, comp.Item{ .type = .coin });
@@ -138,13 +138,13 @@ pub fn createGoal(
 ) entt.Entity {
     const e = reg.create();
     const scale = 4;
-    const shape = comp.Shape.rectangle(18 * scale, 30 * scale);
+    const shape = comp.Shape.new_rectangle(18 * scale, 30 * scale);
     entities.setRenderable(
         reg,
         e,
         comp.Position.fromVec2(spawn_pos.sub(shape.getSize().scale(0.5))),
         shape,
-        comp.Visual.animation(texture, atlas, .{ .name = "portal_0", .speed = 5 }),
+        comp.Visual.new_animation(texture, atlas, .{ .name = "portal_0", .speed = 5 }),
         comp.VisualLayer.new(VisualLayer.items), // TODO: Use a separate layer.
     );
     reg.add(e, comp.Goal{});
@@ -166,8 +166,8 @@ pub fn createEnemey1(
         reg,
         .slow,
         spawn_pos,
-        comp.Shape.rectangle(18 * 3, 10 * 3),
-        comp.Visual.animation(
+        comp.Shape.new_rectangle(18 * 3, 10 * 3),
+        comp.Visual.new_animation(
             texture,
             atlas,
             .{
@@ -190,8 +190,8 @@ pub fn createEnemey2(
         reg,
         .fast,
         spawn_pos,
-        comp.Shape.rectangle(15 * 3, 17 * 3),
-        comp.Visual.animation(
+        comp.Shape.new_rectangle(15 * 3, 17 * 3),
+        comp.Visual.new_animation(
             texture,
             atlas,
             .{
@@ -214,8 +214,8 @@ pub fn createFloatingText(
         reg,
         e,
         comp.Position.fromVec2(spawn_pos),
-        comp.Shape.rectangle(0, 0),
-        comp.Visual.text(text, 14, rl.Color.green),
+        comp.Shape.new_rectangle(0, 0),
+        comp.Visual.new_text(text, 14, rl.Color.green),
         comp.VisualLayer.new(VisualLayer.floating_text),
     );
     entities.setMovable(
@@ -238,7 +238,7 @@ pub fn createParallaxLayer(
 ) entt.Entity {
     const e = reg.create();
     reg.add(e, parallax_layer);
-    var visual = comp.Visual.sprite(
+    var visual = comp.Visual.new_sprite(
         texture,
         m.Rect.new(
             m.Vec2.zero(),
@@ -253,7 +253,7 @@ pub fn createParallaxLayer(
         reg,
         e,
         comp.Position.zero(),
-        comp.Shape.rectangle(size.x(), size.y()),
+        comp.Shape.new_rectangle(size.x(), size.y()),
         visual,
         visual_layer,
     );

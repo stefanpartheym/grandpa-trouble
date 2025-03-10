@@ -397,7 +397,7 @@ fn reset(game: *Game) !void {
     // Setup tilemap.
     {
         const tileset = try tilemap.getTileset(1);
-        const shape = comp.Shape.rectangle(
+        const shape = comp.Shape.new_rectangle(
             @floatFromInt(tilemap.data.tilewidth),
             @floatFromInt(tilemap.data.tileheight),
         );
@@ -422,7 +422,7 @@ fn reset(game: *Game) !void {
                             entity,
                             comp.Position.fromVec2(pos),
                             shape,
-                            comp.Visual.sprite(game.sprites.tileset_texture, tileset.getSpriteRect(tile_id)),
+                            comp.Visual.new_sprite(game.sprites.tileset_texture, tileset.getSpriteRect(tile_id)),
                             comp.VisualLayer.new(prefabs.VisualLayer.map_base_layer + layer_index_i32),
                         );
                         // Add collision for first layer only.
@@ -448,7 +448,7 @@ fn reset(game: *Game) !void {
         while (objects_it.next()) |object| {
             if (std.mem.eql(u8, object.*.type, "enemy_collider")) {
                 const pos = m.Vec2.new(object.*.x, object.*.y);
-                const shape = comp.Shape.rectangle(object.*.width, object.*.height);
+                const shape = comp.Shape.new_rectangle(object.*.width, object.*.height);
                 const entity = reg.create();
                 reg.add(entity, comp.Position.fromVec2(pos));
                 reg.add(entity, shape);
@@ -464,7 +464,7 @@ fn reset(game: *Game) !void {
         while (objects_it.next()) |object| {
             if (std.mem.eql(u8, object.*.type, "player_death")) {
                 const pos = m.Vec2.new(object.*.x, object.*.y);
-                const shape = comp.Shape.rectangle(object.*.width, object.*.height);
+                const shape = comp.Shape.new_rectangle(object.*.width, object.*.height);
                 const entity = reg.create();
                 reg.add(entity, comp.DeadlyCollider{});
                 reg.add(entity, comp.Position.fromVec2(pos));

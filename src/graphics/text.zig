@@ -1,7 +1,7 @@
 const rl = @import("raylib");
 
 pub fn drawTextCentered(
-    text: [*:0]const u8,
+    text: [:0]const u8,
     size: i32,
     color: rl.Color,
 ) void {
@@ -16,7 +16,7 @@ pub fn drawTextCentered(
 }
 
 pub fn drawSymbolAndTextCenteredHorizontally(
-    text: [*:0]const u8,
+    text: [:0]const u8,
     pos_y: f32,
     font: rl.Font,
     font_size: f32,
