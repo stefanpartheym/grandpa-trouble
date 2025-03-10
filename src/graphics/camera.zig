@@ -21,3 +21,10 @@ pub fn updateCameraTarget(camera: *rl.Camera2D, target: m.Vec2, threshold: m.Vec
     if (target.x() > world_max.x) camera.target.x = world_min.x + (target.x() - world_max.x);
     if (target.y() > world_max.y) camera.target.y = world_min.y + (target.y() - world_max.y);
 }
+
+/// Get the optimal camera zoom for HiDPI displays.
+pub fn getCameraZoom() f32 {
+    const render_width: f32 = @floatFromInt(rl.getRenderWidth());
+    const screen_width: f32 = @floatFromInt(rl.getScreenWidth());
+    return render_width / screen_width;
+}

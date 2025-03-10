@@ -126,7 +126,7 @@ pub fn main() !void {
         .target = .{ .x = 0, .y = 0 },
         .offset = .{ .x = 0, .y = 0 },
         .rotation = 0,
-        .zoom = rl.getWindowScaleDPI().x,
+        .zoom = graphics.camera.getCameraZoom(),
     };
 
     var collision_system = systems.collision.CollisionSystem.init(alloc.allocator());
@@ -221,7 +221,7 @@ fn handleAppInput(game: *Game) void {
     // Toggle camera zoom (for debugging).
     if (rl.isKeyPressed(.f3)) {
         camera.zoom = if (camera.zoom == 1)
-            rl.getWindowScaleDPI().x
+            graphics.camera.getCameraZoom()
         else
             1;
     }
