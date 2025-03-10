@@ -12,7 +12,7 @@ pub fn build(b: *std.Build) !void {
         .optimize = b.standardOptimizeOption(.{}),
     };
 
-    if (options.target.result.isWasm()) {
+    if (options.target.result.os.tag == .emscripten) {
         try buildWasm(b, options);
     } else {
         try buildNative(b, options);
@@ -22,10 +22,16 @@ pub fn build(b: *std.Build) !void {
 fn buildNative(b: *std.Build, options: Options) !void {
     const exe = b.addExecutable(.{
         .name = "grandpa-trouble",
+        // TODO: Provide root module for executable rather than deprecated `root_source_file`:
+        // .root_module = module,
         .root_source_file = b.path("src/main.zig"),
         .target = options.target,
         .optimize = options.optimize,
         .link_libc = true,
+        // TODO: For some reason the zig or raylib version cause the following linker warnings:
+        // ld.lld: warning: .../.zig-cache/o/.../libraylib.a: archive member '/lib64/libGLX.so' is neither ET_REL nor LLVM bitcode
+        // To avoid this warning, disable LLD via:
+        // .use_lld = false,
     });
     b.installArtifact(exe);
 
@@ -135,7 +141,11 @@ fn addExeDependencies(
 ) void {
     // Dependencies
     const entt_dep = b.dependency("entt", options);
-    const raylib_dep = b.dependency("raylib-zig", options);
+    // TODO:
+    // New GLFW version bundled with raylib causes runtime warning:
+    // GLFW: Error: 65548 Description: Wayland: The platform does not provide the window position
+    // To avoid this error either use SDL2 backend or set `linux_display_backend = .X11` via dependency args.
+    const raylib_dep = b.dependency("raylib_zig", options);
     const raylib_mod = raylib_dep.module("raylib");
     // Add dependencies as imports.
     artifact.root_module.addImport("entt", entt_dep.module("zig-ecs"));

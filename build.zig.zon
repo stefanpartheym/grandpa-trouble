@@ -1,47 +1,28 @@
 .{
-    // This is the default name used by packages depending on this one. For
-    // example, when a user runs `zig fetch --save <url>`, this field is used
-    // as the key in the `dependencies` table. Although the user can choose a
-    // different name, most users will stick with this provided value.
-    //
-    // It is redundant to include "zig" in this name because it is already
-    // within the Zig package namespace.
-    .name = "grandpa-trouble",
-
-    // This is a [Semantic Version](https://semver.org/).
-    // In a future version of Zig it will be used for package deduplication.
+    .name = .grandpa_trouble,
     .version = "1.0.0",
-
-    // This field is optional.
-    // This is currently advisory only; Zig does not yet do anything
-    // with this value.
-    //.minimum_zig_version = "0.11.0",
-
-    // This field is optional.
-    // Each dependency must either provide a `url` and `hash`, or a `path`.
-    // `zig build --fetch` can be used to fetch all dependencies of a package, recursively.
-    // Once all dependencies are fetched, `zig build` no longer requires
-    // internet connectivity.
+    .fingerprint = 0x603cd0668e3e4c9c,
+    .minimum_zig_version = "0.14.0",
     .dependencies = .{
         .zemscripten = .{
-            .url = "git+https://github.com/stefanpartheym/zemscripten.git#318c1578079478d8fcbac768953fea54a56e81aa",
-            .hash = "1220ed5f3e5f12c9c4e16a506159553c01b29058929930376ff1805db42c21d89304",
+            .url = "git+https://github.com/stefanpartheym/zemscripten.git#7fcebe814bb71c5d384d00856566c97e0138f5f3",
+            .hash = "zemscripten-1.1.0-g1XHfF48AABUMcTeaMoJQAXLKpfip98rUoE2kTabN97a",
         },
         .emsdk = .{
             .url = "git+https://github.com/emscripten-core/emsdk?ref=3.1.70#2514ec738de72cebbba7f4fdba0cf2fabcb779a5",
             .hash = "12203d37f4492c950b6a30710844d6896fbeffc9bc6e70bffef6f702f7c5bc9849f0",
         },
         .zalgebra = .{
-            .url = "git+https://github.com/kooparse/zalgebra.git#0ff2b6093a410b26a294d4ed53985882256072a1",
-            .hash = "1220fbbcfa859f668d69b4f7d2aa621d13b128a77b46965e6c4aae35f9c1d7b85eb8",
+            .url = "git+https://github.com/kooparse/zalgebra.git#4095192e370472a34fddc7b7aa39ab6158643e3b",
+            .hash = "zalgebra-0.0.0-aaiVSsJoAQDdwwbf0Umo7dN71EqXxA73MAioy1p9tGyz",
         },
         .entt = .{
-            .url = "git+https://github.com/prime31/zig-ecs.git#d3ae70ef6185b2e0269d62a57608bfce2567c102",
-            .hash = "1220949709178b133c4d7f6ddf87fa575a9f2e9afe545a39aafdc8c89e6abbe83412",
+            .url = "git+https://github.com/prime31/zig-ecs.git#963709e631227003083ce240c9e76ee136bd1255",
+            .hash = "entt-1.0.0-qJPtbOFwAgA5kF6Snjl6INT5wkh0k_3b-OR06ZBbMfdv",
         },
-        .@"raylib-zig" = .{
-            .url = "git+https://github.com/Not-Nik/raylib-zig.git#5004bb2316fc34a416644f3910c8c79dd08d7c63",
-            .hash = "1220223e9881fc9510eeb30fc2ee73fb49ee645bf1859cc46a92b649d35ecfd3351a",
+        .raylib_zig = .{
+            .url = "git+https://github.com/Not-Nik/raylib-zig.git#5bbafa4f86eb3e3f41a107bbec6b8822e0f87c93",
+            .hash = "raylib_zig-5.6.0-dev-KE8REE0uBQD5Lzuc6qSZPtE5li3iPyU4iGQEMPqOPI11",
         },
     },
     .paths = .{
