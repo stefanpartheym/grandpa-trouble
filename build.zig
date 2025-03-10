@@ -22,11 +22,11 @@ pub fn build(b: *std.Build) !void {
 fn buildNative(b: *std.Build, options: Options) !void {
     const exe = b.addExecutable(.{
         .name = "grandpa-trouble",
-        // TODO: Provide root module for executable rather than deprecated `root_source_file`:
-        // .root_module = module,
-        .root_source_file = b.path("src/main.zig"),
-        .target = options.target,
-        .optimize = options.optimize,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/main.zig"),
+            .target = options.target,
+            .optimize = options.optimize,
+        }),
         .link_libc = true,
         // TODO: For some reason the zig or raylib version cause the following linker warnings:
         // ld.lld: warning: .../.zig-cache/o/.../libraylib.a: archive member '/lib64/libGLX.so' is neither ET_REL nor LLVM bitcode
@@ -50,9 +50,11 @@ fn buildNative(b: *std.Build, options: Options) !void {
 
     // Declare executable tests.
     const unit_tests = b.addTest(.{
-        .root_source_file = b.path("src/test.zig"),
-        .target = options.target,
-        .optimize = options.optimize,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/test.zig"),
+            .target = options.target,
+            .optimize = options.optimize,
+        }),
     });
     addBaseDependencies(b, unit_tests, options);
     const run_unit_tests = b.addRunArtifact(unit_tests);
@@ -68,9 +70,11 @@ fn buildWasm(b: *std.Build, options: Options) !void {
 
     const wasm = b.addStaticLibrary(.{
         .name = "index",
-        .root_source_file = b.path("src/main.zig"),
-        .target = options.target,
-        .optimize = options.optimize,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/main.zig"),
+            .target = options.target,
+            .optimize = options.optimize,
+        }),
     });
 
     // When compiling for WASM, make sure to set `sysroot` before raylib
