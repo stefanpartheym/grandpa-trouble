@@ -135,6 +135,8 @@ pub fn main() !void {
     defer render_system.deinit();
     var debug_render_system = systems.debug_render.DebugRenderSystem.init(&reg, &camera, .{});
     defer debug_render_system.deinit();
+    var animation_system = systems.animation.AnimationSystem.init(&reg);
+    defer animation_system.deinit();
 
     while (app.isRunning()) {
         const delta_time = rl.getFrameTime();
@@ -186,7 +188,7 @@ pub fn main() !void {
                 );
             }
             systems.scrollParallaxLayers(game.reg, &camera);
-            systems.updateAnimations(game.reg, delta_time);
+            animation_system.update(delta_time);
         }
 
         // Render
@@ -252,10 +254,10 @@ fn handlePlayerInput(game: *Game, delta_time: f32) void {
     const collision = reg.get(comp.Collision, player_entity);
     const speed = reg.get(comp.Speed, player_entity).value;
     var vel = reg.get(comp.Velocity, player_entity);
-    var visual = reg.get(comp.Visual, player_entity);
+    var animation = reg.get(comp.Animation, player_entity);
 
-    const last_animation = visual.animation.definition;
-    var next_animation = comp.Visual.AnimationDefinition{
+    const last_animation = animation.definition;
+    var next_animation = comp.Animation.Definition{
         .name = "player_0",
         .speed = 1.5,
         // Inherit flip flag from last animation.
@@ -301,8 +303,7 @@ fn handlePlayerInput(game: *Game, delta_time: f32) void {
         };
     }
 
-    // Change animation.
-    visual.animation.changeAnimation(next_animation);
+    animation.change(next_animation);
 }
 
 fn spawnPlayer(game: *Game) !void {
@@ -540,13 +541,13 @@ fn killPlayer(game: *Game) void {
     vel.value = m.Vec2.new(0, -speed.value.y() * 0.5);
 
     // Play death animation.
-    var visual = reg.get(comp.Visual, e);
-    visual.animation.changeAnimation(.{
+    var animation = reg.get(comp.Animation, e);
+    animation.change(.{
         .name = "player_2",
         .speed = 0,
         .loop = false,
-        .flip_x = visual.animation.definition.flip_x,
-        .padding = visual.animation.definition.padding,
+        .flip_x = animation.definition.flip_x,
+        .padding = animation.definition.padding,
     });
 
     game.changeState(.lost, 1);
@@ -606,8 +607,8 @@ fn killEnemy(game: *Game, entity: entt.Entity) void {
     enemy_collision.layer = prefabs.CollisionLayer.background;
 
     // Freeze animation.
-    var enemy_visual = reg.get(comp.Visual, entity);
-    enemy_visual.animation.freeze();
+    var enemy_animation = reg.get(comp.Animation, entity);
+    enemy_animation.freeze();
 }
 
 fn pickupItem(game: *Game, entity: entt.Entity) void {
@@ -636,16 +637,16 @@ fn updateEnemies(game: *Game) void {
     while (it.next()) |entity| {
         const speed = view.get(comp.Speed, entity);
         var vel = view.get(comp.Velocity, entity);
-        var visual = view.get(comp.Visual, entity);
+        var animation = view.get(comp.Animation, entity);
         const collision = view.get(comp.Collision, entity);
         // Reverse direction if collision occurred on x axis.
         const direction = if (collision.normal.x() == 0) std.math.sign(vel.value.x()) else collision.normal.x();
         const direction_speed = speed.value.mul(m.Vec2.new(direction, 0));
         const flip_x = direction < 0;
-        visual.animation.changeAnimation(.{
-            .name = visual.animation.definition.name,
-            .speed = visual.animation.definition.speed,
-            .padding = visual.animation.definition.padding,
+        animation.change(.{
+            .name = animation.definition.name,
+            .speed = animation.definition.speed,
+            .padding = animation.definition.padding,
             .flip_x = flip_x,
         });
         vel.value.xMut().* = direction_speed.x();

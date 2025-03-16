@@ -190,27 +190,10 @@ pub const Shape = union(ShapeType) {
     }
 };
 
-pub const VisualType = enum {
-    stub,
-    color,
-    sprite,
-    text,
-    animation,
-};
-
-/// Enables sorting entities by their layer to control the order in which they
-/// are drawn.
-pub const VisualLayer = struct {
+pub const Animation = struct {
     const Self = @This();
-    value: i32,
-    pub fn new(value: i32) Self {
-        return Self{ .value = value };
-    }
-};
 
-pub const Visual = union(VisualType) {
-    const Self = @This();
-    pub const AnimationDefinition = struct {
+    pub const Definition = struct {
         name: []const u8,
         loop: bool = true,
         speed: f32 = 1,
@@ -230,6 +213,64 @@ pub const Visual = union(VisualType) {
                 self.padding.eql(other.padding);
         }
     };
+
+    definition: Definition,
+    sprite_sheet: *sprites.AnimatedSpriteSheet,
+    state: sprites.PlayingAnimation,
+
+    pub fn new(definition: Definition, atlas: *sprites.AnimatedSpriteSheet) Self {
+        var state = atlas.playAnimation(definition.name).?;
+        state.loop(definition.loop);
+        state.setSpeed(definition.speed);
+        state.play();
+        if (definition.frame) |start_frame| {
+            state.frame = start_frame;
+        }
+        return Self{
+            .definition = definition,
+            .sprite_sheet = atlas,
+            .state = state,
+        };
+    }
+
+    pub fn change(self: *Self, definition: Definition) void {
+        if (self.definition.eql(definition)) {
+            return;
+        }
+        self.definition = definition;
+        self.state = self.sprite_sheet.playAnimation(definition.name).?;
+        self.state.loop(definition.loop);
+        self.state.setSpeed(definition.speed);
+        self.state.play();
+        if (definition.frame) |start_frame| {
+            self.state.frame = start_frame;
+        }
+    }
+
+    pub fn freeze(self: *Self) void {
+        self.state.pause();
+    }
+};
+
+pub const VisualType = enum {
+    stub,
+    color,
+    sprite,
+    text,
+};
+
+/// Enables sorting entities by their layer to control the order in which they
+/// are drawn.
+pub const VisualLayer = struct {
+    const Self = @This();
+    value: i32,
+    pub fn new(value: i32) Self {
+        return Self{ .value = value };
+    }
+};
+
+pub const Visual = union(VisualType) {
+    const Self = @This();
 
     stub: struct {
         /// In order for the ECS to correctly handle the component, it needs at
@@ -252,33 +293,6 @@ pub const Visual = union(VisualType) {
         size: i32,
         color: rl.Color,
         value: [:0]const u8,
-    },
-    animation: struct {
-        texture: *const rl.Texture,
-        animation: *sprites.AnimatedSpriteSheet,
-        definition: AnimationDefinition,
-        playing_animation: sprites.PlayingAnimation,
-
-        pub fn changeAnimation(
-            self: *@This(),
-            definition: AnimationDefinition,
-        ) void {
-            if (self.definition.eql(definition)) {
-                return;
-            }
-            self.definition = definition;
-            self.playing_animation = self.animation.playAnimation(definition.name).?;
-            self.playing_animation.loop(definition.loop);
-            self.playing_animation.setSpeed(definition.speed);
-            self.playing_animation.play();
-            if (definition.frame) |start_frame| {
-                self.playing_animation.frame = start_frame;
-            }
-        }
-
-        pub fn freeze(self: *@This()) void {
-            self.playing_animation.pause();
-        }
     },
 
     /// Creates a stub Visual component.
@@ -323,25 +337,6 @@ pub const Visual = union(VisualType) {
                 .value = value,
                 .size = size,
                 .color = text_color,
-            },
-        };
-    }
-
-    pub fn new_animation(
-        texture: *const rl.Texture,
-        anim: *sprites.AnimatedSpriteSheet,
-        definition: AnimationDefinition,
-    ) Self {
-        var playing_animation = anim.playAnimation(definition.name).?;
-        playing_animation.setSpeed(definition.speed);
-        playing_animation.loop(definition.loop);
-        playing_animation.play();
-        return Self{
-            .animation = .{
-                .texture = texture,
-                .animation = anim,
-                .definition = definition,
-                .playing_animation = playing_animation,
             },
         };
     }

@@ -38,16 +38,14 @@ pub fn createPlayer(
 ) void {
     const pos = comp.Position.fromVec2(spawn_pos);
     const shape = comp.Shape.new_rectangle(33, 45);
-    entities.setRenderable(
+    entities.setAnimated(
         reg,
         entity,
         pos,
         shape,
-        comp.Visual.new_animation(
-            texture,
-            atlas,
-            .{ .name = "player_0", .speed = 1.5 },
-        ),
+        texture,
+        atlas,
+        .{ .name = "player_0", .speed = 1.5 },
         comp.VisualLayer.new(VisualLayer.player),
     );
     entities.setMovable(
@@ -77,16 +75,20 @@ pub fn createEnemey(
     enemy_type: comp.EnemyType,
     spawn_pos: m.Vec2,
     shape: comp.Shape,
-    visual: comp.Visual,
+    texture: *const rl.Texture,
+    atlas: *graphics.sprites.AnimatedSpriteSheet,
+    animationDefinition: comp.Animation.Definition,
     speed: m.Vec2,
 ) entt.Entity {
     const e = reg.create();
-    entities.setRenderable(
+    entities.setAnimated(
         reg,
         e,
         comp.Position.fromVec2(spawn_pos),
         shape,
-        visual,
+        texture,
+        atlas,
+        animationDefinition,
         comp.VisualLayer.new(VisualLayer.npcs),
     );
     entities.setMovable(
@@ -113,12 +115,14 @@ pub fn createCoin(
 ) entt.Entity {
     const e = reg.create();
     const shape = comp.Shape.new_rectangle(18, 18);
-    entities.setRenderable(
+    entities.setAnimated(
         reg,
         e,
         comp.Position.fromVec2(spawn_pos.sub(shape.getSize().scale(0.5))),
         shape,
-        comp.Visual.new_animation(texture, atlas, .{ .name = "coin_0", .speed = 8 }),
+        texture,
+        atlas,
+        .{ .name = "coin_0", .speed = 8 },
         comp.VisualLayer.new(VisualLayer.items),
     );
     reg.add(e, comp.Item{ .type = .coin });
@@ -139,12 +143,14 @@ pub fn createGoal(
     const e = reg.create();
     const scale = 4;
     const shape = comp.Shape.new_rectangle(18 * scale, 30 * scale);
-    entities.setRenderable(
+    entities.setAnimated(
         reg,
         e,
         comp.Position.fromVec2(spawn_pos.sub(shape.getSize().scale(0.5))),
         shape,
-        comp.Visual.new_animation(texture, atlas, .{ .name = "portal_0", .speed = 5 }),
+        texture,
+        atlas,
+        .{ .name = "portal_0", .speed = 5 },
         comp.VisualLayer.new(VisualLayer.items), // TODO: Use a separate layer.
     );
     reg.add(e, comp.Goal{});
@@ -167,15 +173,13 @@ pub fn createEnemey1(
         .slow,
         spawn_pos,
         comp.Shape.new_rectangle(18 * 3, 10 * 3),
-        comp.Visual.new_animation(
-            texture,
-            atlas,
-            .{
-                .name = "enemies_0",
-                .speed = 6,
-                .padding = m.Vec4.new(0, 10, 2, 10),
-            },
-        ),
+        texture,
+        atlas,
+        .{
+            .name = "enemies_0",
+            .speed = 6,
+            .padding = m.Vec4.new(0, 10, 2, 10),
+        },
         m.Vec2.new(100, 0),
     );
 }
@@ -191,15 +195,13 @@ pub fn createEnemey2(
         .fast,
         spawn_pos,
         comp.Shape.new_rectangle(15 * 3, 17 * 3),
-        comp.Visual.new_animation(
-            texture,
-            atlas,
-            .{
-                .name = "enemies_9",
-                .speed = 6,
-                .padding = m.Vec4.new(2, 3, 4, 3),
-            },
-        ),
+        texture,
+        atlas,
+        .{
+            .name = "enemies_9",
+            .speed = 6,
+            .padding = m.Vec4.new(2, 3, 4, 3),
+        },
         m.Vec2.new(150, 0),
     );
 }

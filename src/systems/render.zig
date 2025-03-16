@@ -103,36 +103,6 @@ pub fn drawEntity(pos: comp.Position, shape: comp.Shape, visual: comp.Visual) vo
             visual.sprite.tint,
         ),
         .text => drawText(visual.text.value, pos.toVec2().cast(i32), visual.text.size, visual.text.color),
-        .animation => {
-            var animation = visual.animation;
-            const padding = animation.definition.padding;
-            const frame = animation.playing_animation.getCurrentFrame();
-            const texture_width = @as(f32, @floatFromInt(animation.texture.width));
-            const texture_height = @as(f32, @floatFromInt(animation.texture.height));
-            const flip_sign_x: f32 = if (animation.definition.flip_x) -1 else 1;
-            const flip_sign_y: f32 = if (animation.definition.flip_y) -1 else 1;
-            const frame_size = m.Vec2.new(
-                texture_width * (frame.region.u_2 - frame.region.u),
-                texture_height * (frame.region.v_2 - frame.region.v),
-            );
-            const source_rect = m.Rect{
-                .x = texture_width * frame.region.u + padding.x(),
-                .y = texture_height * frame.region.v + padding.y(),
-                .width = (frame_size.x() - padding.z()) * flip_sign_x,
-                .height = (frame_size.y() - padding.w()) * flip_sign_y,
-            };
-            drawSprite(
-                .{
-                    .x = pos.x,
-                    .y = pos.y,
-                    .width = shape.getWidth(),
-                    .height = shape.getHeight(),
-                },
-                source_rect,
-                animation.texture.*,
-                null,
-            );
-        },
     }
 }
 

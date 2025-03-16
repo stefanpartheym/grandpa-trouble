@@ -7,7 +7,7 @@ const u = @import("utils/mod.zig");
 
 pub const render = @import("systems/render.zig");
 pub const debug_render = @import("systems/debug_render.zig");
-
+pub const animation = @import("systems/animation.zig");
 pub const collision = @import("systems/collision.zig");
 
 //-----------------------------------------------------------------------------
@@ -68,17 +68,6 @@ pub fn disableNotVisible(reg: *entt.Registry, camera: *const rl.Camera2D) void {
         // Disable entity, if not visible and not already disabled.
         else if (!reg.has(comp.Disabled, entity)) {
             reg.add(entity, comp.Disabled{});
-        }
-    }
-}
-
-pub fn updateAnimations(reg: *entt.Registry, delta_time: f32) void {
-    var view = reg.view(.{comp.Visual}, .{comp.Disabled});
-    var iter = view.entityIterator();
-    while (iter.next()) |entity| {
-        var visual = view.get(comp.Visual, entity);
-        if (visual.* == .animation) {
-            visual.animation.playing_animation.tick(delta_time);
         }
     }
 }
