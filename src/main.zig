@@ -131,6 +131,10 @@ pub fn main() !void {
 
     var collision_system = systems.collision.CollisionSystem.init(alloc.allocator());
     defer collision_system.deinit();
+    var render_system = systems.render.RenderSystem.init(&reg, &camera);
+    defer render_system.deinit();
+    var debug_render_system = systems.debug_render.DebugRenderSystem.init(&reg, &camera, .{});
+    defer debug_render_system.deinit();
 
     while (app.isRunning()) {
         const delta_time = rl.getFrameTime();
@@ -186,19 +190,19 @@ pub fn main() !void {
         }
 
         // Render
-        systems.beginFrame(rl.Color.fromInt(0x2a252000));
+        render_system.beginFrame(rl.Color.fromInt(0x2a252000));
         {
             camera.begin();
-            systems.draw(game.reg, &camera);
+            render_system.draw();
             if (game.debug_mode) {
-                systems.debugDraw(game.reg, rl.Color.yellow);
-                systems.debugDrawVelocity(game.reg, rl.Color.red, delta_time);
+                debug_render_system.draw();
+                debug_render_system.drawVelocities(delta_time);
             }
             camera.end();
         }
         drawHud(&game);
-        if (game.debug_mode) systems.debugDrawFps();
-        systems.endFrame();
+        if (game.debug_mode) debug_render_system.drawFps();
+        render_system.endFrame();
     }
 }
 
