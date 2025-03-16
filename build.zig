@@ -134,8 +134,10 @@ fn addBaseDependencies(
 ) void {
     // Dependencies
     const zalgebra_dep = b.dependency("zalgebra", options);
+    const entt_dep = b.dependency("entt", options);
     // Add dependencies as imports.
     artifact.root_module.addImport("zalgebra", zalgebra_dep.module("zalgebra"));
+    artifact.root_module.addImport("entt", entt_dep.module("zig-ecs"));
 }
 
 fn addExeDependencies(
@@ -144,7 +146,6 @@ fn addExeDependencies(
     options: Options,
 ) void {
     // Dependencies
-    const entt_dep = b.dependency("entt", options);
     // TODO:
     // New GLFW version bundled with raylib causes runtime warning:
     // GLFW: Error: 65548 Description: Wayland: The platform does not provide the window position
@@ -152,7 +153,6 @@ fn addExeDependencies(
     const raylib_dep = b.dependency("raylib_zig", options);
     const raylib_mod = raylib_dep.module("raylib");
     // Add dependencies as imports.
-    artifact.root_module.addImport("entt", entt_dep.module("zig-ecs"));
     artifact.root_module.addImport("raylib", raylib_mod);
     // Link libraries.
     artifact.linkLibrary(raylib_dep.artifact("raylib"));

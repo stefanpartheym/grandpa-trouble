@@ -144,7 +144,7 @@ fn entity_pair_hash(entity1: entt.Entity, entity2: entt.Entity) EntityPairHash {
 //------------------------------------------------------------------------------
 
 test "entity_pair_hash: should generate same hash regardless of order of arguments" {
-    const expected_hash = 18446744073709551618;
+    const expected_hash = 0x00000000000000010000000000000002;
     const collision_hash1 = entity_pair_hash(1, 2);
     try std.testing.expectEqual(expected_hash, collision_hash1);
     const collision_hash2 = entity_pair_hash(2, 1);
@@ -153,8 +153,8 @@ test "entity_pair_hash: should generate same hash regardless of order of argumen
 
 test "entity_pair_hash: should generate hash for entity ID with max u32" {
     const entity1: entt.Entity = std.math.maxInt(u32);
-    const entity2: entt.Entity = 123;
-    const expected_hash = 2268949521070569816063;
+    const entity2: entt.Entity = 0x123456;
+    const expected_hash = 0x000000000012345600000000FFFFFFFF;
     const collision_hash1 = entity_pair_hash(entity1, entity2);
     try std.testing.expectEqual(expected_hash, collision_hash1);
     const collision_hash2 = entity_pair_hash(entity2, entity1);
