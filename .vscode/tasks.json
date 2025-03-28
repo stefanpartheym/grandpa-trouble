@@ -1,0 +1,19 @@
+{
+  "tasks": [
+    {
+      "label": "run-exe",
+      "type": "shell",
+      "command": "zig build run"
+    },
+    {
+      "label": "build-exe",
+      "type": "shell",
+      "command": "zig build"
+    },
+    {
+      "label": "build-test",
+      "type": "shell",
+      "command": "zig build install-test"
+    }
+  ]
+}

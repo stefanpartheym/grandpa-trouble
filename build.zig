@@ -58,10 +58,15 @@ fn buildNative(b: *std.Build, options: Options) !void {
     });
     addBaseDependencies(b, unit_tests, options);
     const run_unit_tests = b.addRunArtifact(unit_tests);
+    const install_unit_tests = b.addInstallArtifact(unit_tests, .{ .dest_sub_path = "test" });
 
     // Run tests.
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_unit_tests.step);
+
+    // Install tests.
+    const install_test_step = b.step("install-test", "Install unit tests");
+    install_test_step.dependOn(&install_unit_tests.step);
 }
 
 fn buildWasm(b: *std.Build, options: Options) !void {
