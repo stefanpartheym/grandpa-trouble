@@ -42,13 +42,13 @@ pub const CollisionSystem = struct {
 
     /// This function is intended to be called on each frame before performing
     /// collision detection and resolution.
-    pub fn onUpdate(self: *Self) void {
+    pub fn resetQueue(self: *Self) void {
         self.queue.clear();
     }
 
     /// This function is intended to be called before detecting collisions for
     /// a single entity.
-    pub fn onEntityCollisionDetection(self: *Self) void {
+    pub fn resetBuffer(self: *Self) void {
         self.buffer.clearAndFree();
     }
 };

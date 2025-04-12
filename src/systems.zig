@@ -9,6 +9,7 @@ pub const render = @import("systems/render.zig");
 pub const debug_render = @import("systems/debug_render.zig");
 pub const animation = @import("systems/animation.zig");
 pub const collision = @import("systems/collision.zig");
+pub const physics = @import("systems/physics.zig");
 
 //-----------------------------------------------------------------------------
 // Misc

@@ -131,12 +131,16 @@ pub fn main() !void {
 
     var collision_system = systems.collision.CollisionSystem.init(alloc.allocator());
     defer collision_system.deinit();
+    var physics_system = systems.physics.PhysicsSystem.init(&reg, &collision_system);
+    defer physics_system.deinit();
     var render_system = systems.render.RenderSystem.init(&reg, &camera);
     defer render_system.deinit();
     var debug_render_system = systems.debug_render.DebugRenderSystem.init(&reg, &camera, .{});
     defer debug_render_system.deinit();
     var animation_system = systems.animation.AnimationSystem.init(&reg);
     defer animation_system.deinit();
+
+    var sw = u.debug.Stopwatch.new(false);
 
     while (app.isRunning()) {
         const delta_time = rl.getFrameTime();
@@ -173,9 +177,13 @@ pub fn main() !void {
             // Physics
             systems.applyGravity(game.reg, 1980 * delta_time);
             systems.clampVelocity(game.reg);
-            collision_system.onUpdate();
-            try detectCollisions(game.reg, &collision_system, delta_time);
+            collision_system.resetQueue();
+            sw.start();
+            try physics_system.update(delta_time);
+            sw.print("Detect collisions");
+            sw.start();
             handleCollisions(&game, &collision_system, delta_time);
+            sw.print("Handle collisions");
             systems.updatePosition(game.reg, delta_time);
 
             // Graphics
@@ -650,96 +658,6 @@ fn updateEnemies(game: *Game) void {
             .flip_x = flip_x,
         });
         vel.value.xMut().* = direction_speed.x();
-    }
-}
-
-//------------------------------------------------------------------------------
-// Physics
-//------------------------------------------------------------------------------
-
-fn detectCollisions(
-    reg: *entt.Registry,
-    collision_system: *systems.collision.CollisionSystem,
-    delta_time: f32,
-) !void {
-    const CollisionData = systems.collision.CollisionData;
-
-    var view = reg.view(.{ comp.Position, comp.Velocity, comp.Collision }, .{comp.Disabled});
-    var it = view.entityIterator();
-
-    // Reset collision state for all dynamic entities.
-    while (it.next()) |entity| {
-        var collision = view.get(comp.Collision, entity);
-        collision.normal = m.Vec2.zero();
-    }
-
-    it.reset();
-
-    // Perform collision detection.
-    while (it.next()) |entity| {
-        collision_system.onEntityCollisionDetection();
-
-        const pos = view.get(comp.Position, entity);
-        var collision_comp = view.get(comp.Collision, entity);
-        var vel = view.get(comp.Velocity, entity);
-        const aabb = coll.Aabb.new(pos.toVec2(), collision_comp.aabb_size);
-        const broadphase_aabb = coll.Aabb.fromMovement(pos.toVec2(), collision_comp.aabb_size, vel.value.scale(delta_time));
-
-        // Perform broadphase collision detection.
-        // Do NOT exclude disabled entities for the colliders, as they would
-        // otherwise be skipped in collision detection and entities would fall
-        // through the gorund.
-        // PERF: View can be created outside of the loop.
-        var collider_view = reg.view(.{ comp.Position, comp.Collision }, .{});
-        var collider_it = collider_view.entityIterator();
-        while (collider_it.next()) |collider| {
-            // Skip collision check with self.
-            if (collider == entity) continue;
-
-            // Skip collision check if entities cannot collide.
-            const collider_collision_comp = collider_view.getConst(comp.Collision, collider);
-            if (!collision_comp.canCollide(collider_collision_comp)) continue;
-
-            const collider_pos = collider_view.get(comp.Position, collider).toVec2();
-            const collider_size = collider_collision_comp.aabb_size;
-            // Get collider velocity, if available.
-            const collider_vel = if (reg.tryGet(comp.Velocity, collider)) |collider_vel_comp|
-                collider_vel_comp.value
-            else
-                m.Vec2.zero();
-            // Calculate broadphase collider AABB based on potential movement.
-            const broadphase_collider_aabb = coll.Aabb.fromMovement(
-                collider_pos,
-                collider_size,
-                collider_vel.scale(delta_time),
-            );
-            // Check intersection between broadphase AABBs.
-            if (broadphase_aabb.intersects(broadphase_collider_aabb)) {
-                const collider_aabb = coll.Aabb.new(collider_pos, collider_size);
-                const relative_vel = vel.value.sub(collider_vel).scale(delta_time);
-                // Calculate time of impact based on relative velocity.
-                const result = coll.aabbToAabb(aabb, collider_aabb, relative_vel);
-                try collision_system.buffer.append(CollisionData.new(
-                    entity,
-                    aabb,
-                    collider,
-                    collider_aabb,
-                    collider_vel,
-                    result,
-                ));
-            }
-        }
-
-        // Sort collisions by time to resolve nearest collision first.
-        collision_system.sortBuffer();
-
-        // Append collisions in order.
-        for (collision_system.buffer.items) |collision| {
-            // Skip collisions, that are already in the list.
-            if (!collision_system.queue.contains(collision.hash())) {
-                try collision_system.queue.append(collision);
-            }
-        }
     }
 }
 
