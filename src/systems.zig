@@ -94,34 +94,6 @@ pub fn scrollParallaxLayers(reg: *entt.Registry, camera: *const rl.Camera2D) voi
 // Physics
 //-----------------------------------------------------------------------------
 
-/// Apply gravity to all relevant entities.
-pub fn applyGravity(reg: *entt.Registry, force: f32) void {
-    var view = reg.view(.{ comp.Velocity, comp.Gravity }, .{comp.Disabled});
-    var it = view.entityIterator();
-    while (it.next()) |entity| {
-        const gravity = view.get(comp.Gravity, entity);
-        const gravity_amount = force * gravity.factor;
-        var vel = view.get(comp.Velocity, entity);
-        vel.value.yMut().* += gravity_amount;
-    }
-}
-
-/// Clamp to terminal velocity.
-pub fn clampVelocity(reg: *entt.Registry) void {
-    var view = reg.view(.{comp.Velocity}, .{comp.Disabled});
-    var it = view.entityIterator();
-    while (it.next()) |entity| {
-        var vel: *comp.Velocity = view.get(comp.Velocity, entity);
-        const lower = vel.terminal.scale(-1);
-        const upper = vel.terminal;
-        const vel_clamped = m.Vec2.new(
-            std.math.clamp(vel.value.x(), lower.x(), upper.x()),
-            std.math.clamp(vel.value.y(), lower.y(), upper.y()),
-        );
-        vel.value = vel_clamped;
-    }
-}
-
 /// Update entities position based on their velocity.
 pub fn updatePosition(reg: *entt.Registry, delta_time: f32) void {
     var view = reg.view(.{ comp.Position, comp.Velocity }, .{comp.Disabled});

@@ -140,8 +140,6 @@ pub fn main() !void {
     var animation_system = systems.animation.AnimationSystem.init(&reg);
     defer animation_system.deinit();
 
-    var sw = u.debug.Stopwatch.new(false);
-
     while (app.isRunning()) {
         const delta_time = rl.getFrameTime();
 
@@ -175,15 +173,8 @@ pub fn main() !void {
             updateEnemies(&game);
 
             // Physics
-            systems.applyGravity(game.reg, 1980 * delta_time);
-            systems.clampVelocity(game.reg);
-            collision_system.resetQueue();
-            sw.start();
             try physics_system.update(delta_time);
-            sw.print("Detect collisions");
-            sw.start();
             handleCollisions(&game, &collision_system, delta_time);
-            sw.print("Handle collisions");
             systems.updatePosition(game.reg, delta_time);
 
             // Graphics

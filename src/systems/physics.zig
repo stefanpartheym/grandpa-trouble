@@ -11,6 +11,10 @@ pub const PhysicsSystem = struct {
 
     reg: *entt.Registry,
     collision_system: *CollisionSystem,
+    /// Entities to apply gravity to.
+    gravity_view: entt.MultiView(2, 1),
+    /// Entities to clamp velocity of.
+    velocity_view: entt.MultiView(1, 1),
     /// Entities to check for collisions.
     entity_view: entt.MultiView(3, 1),
     /// Potential collider entities to check against.
@@ -20,6 +24,8 @@ pub const PhysicsSystem = struct {
         return .{
             .reg = reg,
             .collision_system = collision_system,
+            .gravity_view = reg.view(.{ comp.Velocity, comp.Gravity }, .{comp.Disabled}),
+            .velocity_view = reg.view(.{comp.Velocity}, .{comp.Disabled}),
             .entity_view = reg.view(.{ comp.Position, comp.Velocity, comp.Collision }, .{comp.Disabled}),
             .collider_view = reg.view(.{ comp.Position, comp.Collision }, .{}),
         };
@@ -30,7 +36,36 @@ pub const PhysicsSystem = struct {
     }
 
     pub fn update(self: *Self, delta_time: f32) !void {
+        self.applyGravity(1980 * delta_time);
+        self.clampVelocity();
+        self.collision_system.resetQueue();
         try self.detectCollisions(delta_time);
+    }
+
+    /// Apply gravity to all relevant entities.
+    fn applyGravity(self: *Self, force: f32) void {
+        var it = self.gravity_view.entityIterator();
+        while (it.next()) |entity| {
+            const gravity = self.gravity_view.get(comp.Gravity, entity);
+            const gravity_amount = force * gravity.factor;
+            var vel = self.gravity_view.get(comp.Velocity, entity);
+            vel.value.yMut().* += gravity_amount;
+        }
+    }
+
+    /// Clamp to terminal velocity.
+    fn clampVelocity(self: *Self) void {
+        var it = self.velocity_view.entityIterator();
+        while (it.next()) |entity| {
+            var vel: *comp.Velocity = self.velocity_view.get(comp.Velocity, entity);
+            const lower = vel.terminal.scale(-1);
+            const upper = vel.terminal;
+            const vel_clamped = m.Vec2.new(
+                std.math.clamp(vel.value.x(), lower.x(), upper.x()),
+                std.math.clamp(vel.value.y(), lower.y(), upper.y()),
+            );
+            vel.value = vel_clamped;
+        }
     }
 
     fn detectCollisions(self: *Self, delta_time: f32) !void {
