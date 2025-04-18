@@ -222,6 +222,8 @@ pub const GameScene = struct {
         };
 
         self.initialized = true;
+
+        self.game.setState(.playing);
     }
 
     fn deinit(ptr: *anyopaque, _: std.mem.Allocator) void {
@@ -340,7 +342,8 @@ fn handleAppInput(self: *GameScene, ctx: SceneManager.Context) !void {
     if (rl.isKeyPressed(.enter)) {
         switch (self.game.state) {
             .playing => self.game.setState(.paused),
-            .ready, .paused, .won, .lost, .gameover => self.game.setState(.playing),
+            .paused, .won, .lost, .gameover => self.game.setState(.playing),
+            else => unreachable,
         }
     }
 }
@@ -911,11 +914,6 @@ fn drawHud(game: *Game) void {
             game.sprites.ui_pause,
             symbol_scale,
         ),
-        .ready => graphics.text.drawTextCentered(
-            "Press ENTER to to start.",
-            font_size,
-            rl.Color.ray_white,
-        ),
         .won => graphics.text.drawTextCentered(
             "Level completed!\nPress ENTER to continue.",
             font_size,
@@ -931,5 +929,6 @@ fn drawHud(game: *Game) void {
             font_size,
             rl.Color.ray_white,
         ),
+        else => unreachable,
     }
 }
