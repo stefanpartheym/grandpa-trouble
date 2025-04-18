@@ -1,6 +1,6 @@
 const Application = @import("../application.zig").Application;
 const MainMenuScene = @import("./MainMenuScene.zig");
-const GameScene = @import("./GameScene.zig").GameScene;
+const GameScene = @import("./GameScene.zig");
 const GameMenuScene = @import("./GameMenuScene.zig");
 
 pub const SceneContext = struct {
