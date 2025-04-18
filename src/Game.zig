@@ -141,7 +141,6 @@ const Self = @This();
 state: State,
 next_state: ?State,
 app: *Application,
-config: *Application.Config,
 reg: *entt.Registry,
 
 entities: Entities,
@@ -178,7 +177,6 @@ pub fn new(
         .state = .ready,
         .next_state = null,
         .app = app,
-        .config = &app.config,
         .reg = reg,
         .entities = Entities.new(reg),
         .systems = systems,
@@ -451,8 +449,8 @@ fn reset(game: *Self) !void {
     // Setup background layers.
     {
         const screen_size = m.Vec2.new(
-            game.config.getDisplayWidth(),
-            game.config.getDisplayHeight(),
+            game.app.config.getDisplayWidth(),
+            game.app.config.getDisplayHeight(),
         );
         const tint = rl.Color.init(61, 56, 70, 255);
         _ = prefabs.createParallaxLayer(
