@@ -45,6 +45,10 @@ fn init_fn(ptr: *anyopaque, _: SceneManager.Context) !void {
 fn update(ptr: *anyopaque, ctx: SceneManager.Context, _: f32) !void {
     const self = SceneManager.ptrCast(Self, ptr);
 
+    if (rl.isKeyPressed(rl.KeyboardKey.escape) or rl.isKeyPressed(rl.KeyboardKey.q)) {
+        try ctx.manager.replace(ctx.context.main_menu_scene.scene());
+    }
+
     if (rl.isKeyPressed(rl.KeyboardKey.enter)) {
         switch (self.menu.currentItem().id) {
             Action.resume_game.value() => ctx.manager.pop(),
