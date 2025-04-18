@@ -44,6 +44,9 @@ pub fn main() !void {
     try scene_manager.push(main_menu_scene.scene());
 
     while (app.isRunning()) {
+        if (rl.windowShouldClose()) {
+            app.shutdown();
+        }
         try scene_manager.update(rl.getFrameTime());
         rl.beginDrawing();
         scene_manager.render();
