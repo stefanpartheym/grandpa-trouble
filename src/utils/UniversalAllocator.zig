@@ -1,6 +1,5 @@
-//! paa - Platform agnostic allocator
-//! Agnostic allocator frontend, that chooses the appropriate allocator backend
-//! based on the host platform.
+//! Platform agnostic allocator frontend, that chooses the appropriate allocator
+//! backend based on the host platform.
 //! The `GeneralPurposeAllocator` will cause OOM errors for web builds. In such
 //! cases the C allocator must be used instead.
 //! see: [https://github.com/ziglang/zig/issues/19072](https://github.com/ziglang/zig/issues/19072)

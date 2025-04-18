@@ -3,7 +3,6 @@ const rl = @import("raylib");
 const entt = @import("entt");
 const u = @import("../utils/mod.zig");
 const graphics = @import("../graphics/mod.zig");
-const application = @import("../application.zig");
 const SceneManager = @import("./scene_manager.zig").SceneManager;
 const Game = @import("../Game.zig");
 const tiled = @import("../tiled.zig");
@@ -82,11 +81,11 @@ fn init_fn(ptr: *anyopaque, ctx: SceneManager.Context) !void {
 
     // Initialize systems
     self.systems = .{
-        .collision = ecs_systems.collision.CollisionSystem.init(self.allocator),
-        .physics = ecs_systems.physics.PhysicsSystem.init(&self.reg, &self.systems.collision),
-        .render = ecs_systems.render.RenderSystem.init(&self.reg, &self.camera),
-        .debug_render = ecs_systems.debug_render.DebugRenderSystem.init(&self.reg, &self.camera, .{}),
-        .animation = ecs_systems.animation.AnimationSystem.init(&self.reg),
+        .collision = ecs_systems.CollisionSystem.init(self.allocator),
+        .physics = ecs_systems.PhysicsSystem.init(&self.reg, &self.systems.collision),
+        .render = ecs_systems.RenderSystem.init(&self.reg, &self.camera),
+        .debug_render = ecs_systems.DebugRenderSystem.init(&self.reg, &self.camera, .{}),
+        .animation = ecs_systems.AnimationSystem.init(&self.reg),
     };
 
     self.initialized = true;

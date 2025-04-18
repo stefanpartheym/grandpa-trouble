@@ -4,53 +4,51 @@ const rl = @import("raylib");
 const comp = @import("../components.zig");
 const m = @import("../math/mod.zig");
 
-pub const RenderSystem = struct {
-    const Self = @This();
+const Self = @This();
 
-    reg: *entt.Registry,
-    camera: *const rl.Camera2D,
-    drawGroup: entt.OwningGroup,
+reg: *entt.Registry,
+camera: *const rl.Camera2D,
+drawGroup: entt.OwningGroup,
 
-    pub fn init(reg: *entt.Registry, camera: *const rl.Camera2D) Self {
-        return .{
-            .reg = reg,
-            .camera = camera,
-            .drawGroup = reg.group(.{ comp.Position, comp.Shape, comp.Visual }, .{}, .{}),
-        };
-    }
+pub fn init(reg: *entt.Registry, camera: *const rl.Camera2D) Self {
+    return .{
+        .reg = reg,
+        .camera = camera,
+        .drawGroup = reg.group(.{ comp.Position, comp.Shape, comp.Visual }, .{}, .{}),
+    };
+}
 
-    pub fn deinit(self: *Self) void {
-        _ = self;
-    }
+pub fn deinit(self: *Self) void {
+    _ = self;
+}
 
-    pub fn beginFrame(_: *const Self, clear_color: ?rl.Color) void {
-        rl.beginDrawing();
-        rl.clearBackground(clear_color orelse rl.Color.blank);
-    }
+pub fn beginFrame(_: *const Self, clear_color: ?rl.Color) void {
+    rl.beginDrawing();
+    rl.clearBackground(clear_color orelse rl.Color.blank);
+}
 
-    pub fn endFrame(_: *const Self) void {
-        rl.endDrawing();
-    }
+pub fn endFrame(_: *const Self) void {
+    rl.endDrawing();
+}
 
-    pub fn draw(self: *Self) void {
-        // Sort entities based on their `VisualLayer`.
-        const context = SortContext{ .reg = self.reg };
-        self.drawGroup.sort(entt.Entity, context, SortContext.sort);
+pub fn draw(self: *Self) void {
+    // Sort entities based on their `VisualLayer`.
+    const context = SortContext{ .reg = self.reg };
+    self.drawGroup.sort(entt.Entity, context, SortContext.sort);
 
-        var iter = self.drawGroup.entityIterator();
-        while (iter.next()) |entity| {
-            if (self.reg.has(comp.Disabled, entity)) continue;
-            const pos: comp.Position = self.drawGroup.getConst(comp.Position, entity);
-            const shape: comp.Shape = self.drawGroup.getConst(comp.Shape, entity);
-            const visual: comp.Visual = self.drawGroup.getConst(comp.Visual, entity);
-            if (self.reg.has(comp.ParallaxLayer, entity)) {
-                drawParallaxLayer(self.camera, pos, shape, visual);
-            } else {
-                drawEntity(pos, shape, visual);
-            }
+    var iter = self.drawGroup.entityIterator();
+    while (iter.next()) |entity| {
+        if (self.reg.has(comp.Disabled, entity)) continue;
+        const pos: comp.Position = self.drawGroup.getConst(comp.Position, entity);
+        const shape: comp.Shape = self.drawGroup.getConst(comp.Shape, entity);
+        const visual: comp.Visual = self.drawGroup.getConst(comp.Visual, entity);
+        if (self.reg.has(comp.ParallaxLayer, entity)) {
+            drawParallaxLayer(self.camera, pos, shape, visual);
+        } else {
+            drawEntity(pos, shape, visual);
         }
     }
-};
+}
 
 const SortContext = struct {
     const Self = @This();
@@ -59,7 +57,7 @@ const SortContext = struct {
     default_layer: comp.VisualLayer = comp.VisualLayer.new(0),
 
     /// Compare function to sort entities by their `VisualLayer`.
-    fn sort(self: Self, a: entt.Entity, b: entt.Entity) bool {
+    fn sort(self: @This(), a: entt.Entity, b: entt.Entity) bool {
         const a_layer = self.reg.tryGetConst(comp.VisualLayer, a) orelse self.default_layer;
         const b_layer = self.reg.tryGetConst(comp.VisualLayer, b) orelse self.default_layer;
         return a_layer.value > b_layer.value;

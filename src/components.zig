@@ -3,7 +3,6 @@ const rl = @import("raylib");
 const entt = @import("entt");
 const m = @import("math/mod.zig");
 const sprites = @import("graphics/mod.zig").sprites;
-const Timer = @import("timer.zig").Timer;
 const Rect = m.Rect;
 const Vec2 = m.Vec2;
 const collision = @import("collision.zig");

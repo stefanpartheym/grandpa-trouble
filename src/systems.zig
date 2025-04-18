@@ -5,11 +5,11 @@ const comp = @import("components.zig");
 const m = @import("math/mod.zig");
 const u = @import("utils/mod.zig");
 
-pub const render = @import("systems/render.zig");
-pub const debug_render = @import("systems/debug_render.zig");
-pub const animation = @import("systems/animation.zig");
-pub const collision = @import("systems/collision.zig");
-pub const physics = @import("systems/physics.zig");
+pub const RenderSystem = @import("systems/RenderSystem.zig");
+pub const DebugRenderSystem = @import("systems/DebugRenderSystem.zig");
+pub const AnimationSystem = @import("systems/AnimationSystem.zig");
+pub const CollisionSystem = @import("systems/CollisionSystem.zig");
+pub const PhysicsSystem = @import("systems/PhysicsSystem.zig");
 
 //-----------------------------------------------------------------------------
 // Misc

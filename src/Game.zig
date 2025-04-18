@@ -5,9 +5,9 @@ const rl = @import("raylib");
 const entt = @import("entt");
 const graphics = @import("graphics/mod.zig");
 const m = @import("math/mod.zig");
-const application = @import("application.zig");
+const u = @import("utils/mod.zig");
+const Application = @import("Application.zig");
 const tiled = @import("tiled.zig");
-const Timer = @import("timer.zig").Timer;
 const coll = @import("collision.zig");
 const comp = @import("components.zig");
 const prefabs = @import("prefabs.zig");
@@ -67,11 +67,11 @@ const Entities = struct {
 };
 
 pub const Systems = struct {
-    collision: ecs.systems.collision.CollisionSystem,
-    physics: ecs.systems.physics.PhysicsSystem,
-    render: ecs.systems.render.RenderSystem,
-    debug_render: ecs.systems.debug_render.DebugRenderSystem,
-    animation: ecs.systems.animation.AnimationSystem,
+    collision: ecs.systems.CollisionSystem,
+    physics: ecs.systems.PhysicsSystem,
+    render: ecs.systems.RenderSystem,
+    debug_render: ecs.systems.DebugRenderSystem,
+    animation: ecs.systems.AnimationSystem,
 
     pub fn deinit(self: *@This()) void {
         self.animation.deinit();
@@ -140,8 +140,8 @@ const Self = @This();
 
 state: State,
 next_state: ?State,
-app: *application.Application,
-config: *application.ApplicationConfig,
+app: *Application,
+config: *Application.Config,
 reg: *entt.Registry,
 
 entities: Entities,
@@ -157,16 +157,16 @@ score: u32,
 lives: u8,
 /// Tracks the time elapsed since the the player started the game.
 /// When the player pauses the game, the timer is also paused.
-level_timer: Timer,
+level_timer: u.Timer,
 /// Time in seconds the player has to finish the level.
 level_time: f32,
 /// Tracks when to change to the next state.
-state_timer: Timer,
+state_timer: u.Timer,
 /// Time in seconds until the next state will be applied.
 state_delay: f32,
 
 pub fn new(
-    app: *application.Application,
+    app: *Application,
     reg: *entt.Registry,
     systems: *Systems,
     sprites: *Sprites,
@@ -190,9 +190,9 @@ pub fn new(
         .audio_enabled = true,
         .score = 0,
         .lives = 3,
-        .level_timer = Timer.new(),
+        .level_timer = u.Timer.new(),
         .level_time = 100,
-        .state_timer = Timer.new(),
+        .state_timer = u.Timer.new(),
         .state_delay = 0,
     };
 }
@@ -765,7 +765,7 @@ fn updateEnemies(self: *Self) void {
 
 fn handleCollisions(
     self: *Self,
-    collision_system: *ecs.systems.collision.CollisionSystem,
+    collision_system: *ecs.systems.CollisionSystem,
     delta_time: f32,
 ) void {
     const reg = self.reg;

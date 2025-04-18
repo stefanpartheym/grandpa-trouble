@@ -1,15 +1,15 @@
 const rl = @import("raylib");
-const paa = @import("paa.zig");
-const application = @import("application.zig");
+const u = @import("utils/mod.zig");
+const Application = @import("Application.zig");
 const scenes = @import("scenes/mod.zig");
 
 pub fn main() !void {
-    var alloc = paa.init();
+    var alloc = u.UniversalAllocator.init();
     defer alloc.deinit();
 
-    var app = application.Application.init(
+    var app = Application.init(
         alloc.allocator(),
-        application.ApplicationConfig{
+        Application.Config{
             .title = "Grandpa Trouble",
             .display = .{
                 .width = 960,

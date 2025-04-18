@@ -3,91 +3,88 @@ const entt = @import("entt");
 const m = @import("../math/mod.zig");
 const coll = @import("../collision.zig");
 
-pub const CollisionSystem = struct {
-    const Self = @This();
+const Self = @This();
 
-    ally: std.mem.Allocator,
-    /// Queue of collisions that occurred in the current frame. Collisions are
-    /// processed in order.
-    /// The queue is cleared on each frame.
-    queue: CollisionQueue,
-    /// List of collisions for the entity that is currently being processed.
-    /// This buffer is cleared on each iteration of the entity collision
-    /// detection.
-    buffer: CollisionList,
+ally: std.mem.Allocator,
+/// Queue of collisions that occurred in the current frame. Collisions are
+/// processed in order.
+/// The queue is cleared on each frame.
+queue: CollisionQueue,
+/// List of collisions for the entity that is currently being processed.
+/// This buffer is cleared on each iteration of the entity collision
+/// detection.
+buffer: CollisionList,
 
-    pub fn init(ally: std.mem.Allocator) Self {
-        return .{
-            .ally = ally,
-            .queue = CollisionQueue.init(ally),
-            .buffer = CollisionList.init(ally),
-        };
-    }
+pub fn init(ally: std.mem.Allocator) Self {
+    return .{
+        .ally = ally,
+        .queue = CollisionQueue.init(ally),
+        .buffer = CollisionList.init(ally),
+    };
+}
 
-    pub fn deinit(self: *Self) void {
-        self.queue.deinit();
-        self.buffer.deinit();
-    }
+pub fn deinit(self: *Self) void {
+    self.queue.deinit();
+    self.buffer.deinit();
+}
 
-    /// Sort collisions by time to resolve nearest collision first.
-    pub fn sortBuffer(self: *Self) void {
-        const sort = struct {
-            /// Compare function to sort collision results by time.
-            pub fn sortFn(_: void, lhs: CollisionData, rhs: CollisionData) bool {
-                return lhs.result.time < rhs.result.time;
-            }
-        }.sortFn;
-        std.sort.insertion(CollisionData, self.buffer.items, {}, sort);
-    }
+/// Sort collisions by time to resolve nearest collision first.
+pub fn sortBuffer(self: *Self) void {
+    const sort = struct {
+        /// Compare function to sort collision results by time.
+        pub fn sortFn(_: void, lhs: CollisionData, rhs: CollisionData) bool {
+            return lhs.result.time < rhs.result.time;
+        }
+    }.sortFn;
+    std.sort.insertion(CollisionData, self.buffer.items, {}, sort);
+}
 
-    /// This function is intended to be called on each frame before performing
-    /// collision detection and resolution.
-    pub fn resetQueue(self: *Self) void {
-        self.queue.clear();
-    }
+/// This function is intended to be called on each frame before performing
+/// collision detection and resolution.
+pub fn resetQueue(self: *Self) void {
+    self.queue.clear();
+}
 
-    /// This function is intended to be called before detecting collisions for
-    /// a single entity.
-    pub fn resetBuffer(self: *Self) void {
-        self.buffer.clearAndFree();
-    }
-};
+/// This function is intended to be called before detecting collisions for
+/// a single entity.
+pub fn resetBuffer(self: *Self) void {
+    self.buffer.clearAndFree();
+}
 
 const CollisionList = std.ArrayList(CollisionData);
 
 const CollisionQueue = struct {
-    const Self = @This();
     const CollisionMap = std.AutoHashMap(EntityPairHash, void);
 
     list: CollisionList,
     map: CollisionMap,
 
-    pub fn init(alloc: std.mem.Allocator) Self {
+    pub fn init(alloc: std.mem.Allocator) @This() {
         return .{
             .list = CollisionList.init(alloc),
             .map = CollisionMap.init(alloc),
         };
     }
 
-    pub fn deinit(self: *Self) void {
+    pub fn deinit(self: *@This()) void {
         self.list.deinit();
         self.map.deinit();
     }
 
-    pub fn clear(self: *Self) void {
+    pub fn clear(self: *@This()) void {
         self.list.clearAndFree();
         self.map.clearAndFree();
     }
 
-    pub fn items(self: Self) []CollisionData {
+    pub fn items(self: @This()) []CollisionData {
         return self.list.items;
     }
 
-    pub fn contains(self: *Self, hash: EntityPairHash) bool {
+    pub fn contains(self: *@This(), hash: EntityPairHash) bool {
         return self.map.contains(hash);
     }
 
-    pub fn append(self: *Self, data: CollisionData) !void {
+    pub fn append(self: *@This(), data: CollisionData) !void {
         try self.list.append(data);
         try self.map.put(data.hash(), {});
     }
@@ -110,7 +107,7 @@ pub const CollisionData = struct {
         collider_aabb: coll.Aabb,
         collider_vel: m.Vec2,
         result: coll.CollisionResult,
-    ) Self {
+    ) @This() {
         return .{
             .entity = entity,
             .entity_aabb = entity_aabb,
@@ -121,7 +118,7 @@ pub const CollisionData = struct {
         };
     }
 
-    pub fn hash(self: Self) EntityPairHash {
+    pub fn hash(self: @This()) EntityPairHash {
         return entity_pair_hash(self.entity, self.collider);
     }
 };
