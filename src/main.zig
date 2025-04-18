@@ -40,6 +40,8 @@ pub fn main() !void {
     // Start application.
     // Must happen before loading textures and sounds.
     app.start();
+    // Do not exit the application when Escape key is pressed.
+    rl.setExitKey(rl.KeyboardKey.null);
 
     try scene_manager.push(main_menu_scene.scene());
 

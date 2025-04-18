@@ -1,11 +1,11 @@
+const rl = @import("raylib");
+const MenuOptions = @import("../Menu.zig").Options;
+
 pub const background = struct {
     pub const color = 0x2a2520ff;
 };
 
-pub const menu_text = struct {
-    pub const size = 36;
-    pub const color = struct {
-        pub const regular = 0xb5b5b5ff;
-        pub const selected = 0x6172a9ff;
-    };
+pub const menu_options = MenuOptions{
+    .font_size = 36,
+    .menu_color = rl.Color{ .r = 0x11, .g = 0x0e, .b = 0x0b, .a = 127 },
 };
