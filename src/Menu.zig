@@ -27,7 +27,7 @@ pub const Options = struct {
     /// Space between characters.
     text_spacing: f32 = default_font_size / 10,
     text_color_regular: rl.Color = rl.Color.gray,
-    text_color_selected: rl.Color = rl.Color.light_gray,
+    text_color_selected: rl.Color = rl.Color.ray_white,
 };
 
 const Self = @This();
