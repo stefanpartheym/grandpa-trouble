@@ -1,5 +1,21 @@
 const rl = @import("raylib");
 
+pub fn drawTextCenteredH(
+    text: [:0]const u8,
+    size: i32,
+    color: rl.Color,
+    pos_y: i32,
+) void {
+    const text_width = rl.measureText(text, size);
+    rl.drawText(
+        text,
+        @divTrunc(rl.getScreenWidth(), 2) - @divTrunc(text_width, 2),
+        pos_y,
+        size,
+        color,
+    );
+}
+
 pub fn drawTextCentered(
     text: [:0]const u8,
     size: i32,
